@@ -1,0 +1,12 @@
+[submodule "Front"]
+	path = Front
+	url = https://github.com/MSPRProject/Front.git
+[submodule "API"]
+	path = API
+	url = https://github.com/MSPRProject/Api.git
+[submodule "IA"]
+	path = IA
+	url = https://github.com/MSPRProject/IA.git
+[submodule "Scripting"]
+	path = Scripting
+	url = https://github.com/MSPRProject/Scripting.git

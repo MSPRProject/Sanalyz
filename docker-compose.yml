@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+
+  front:
+    build: ./Front
+    container_name: front-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - api
+    restart: always
+
+  api:
+    build: ./API
+    container_name: api-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ia
+    restart: always
+
+  ia:
+    build: ./IA
+    container_name: ia-app
+    ports:
+      - "8000:8000"
+    restart: always
