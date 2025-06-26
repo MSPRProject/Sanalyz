@@ -1,28 +1,63 @@
-version: "3.9"
-
 services:
 
-  front:
-    build: ./Front
-    container_name: front-app
+  db:
+    image: postgres:latest
+    container_name: sanalyz-db
+    environment:
+      - POSTGRES_USER=value
+      - POSTGRES_PASSWORD=value
+      - POSTGRES_DB=value
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     ports:
-      - "5000:5000"
+      - "5432:5432"
+    restart: always
+  
+  api:
+    build: ./API
+    container_name: api-spring
+    ports: 
+      - "8080:8080"
+    volumes:
+    - ./API:/app
+    depends_on:
+      - db
+    restart: always
+
+  front: 
+    build: ./Front
+    container_name: sanalyz-front
+    ports: 
+      - "4200:4200"
     depends_on:
       - api
     restart: always
-
-  api:
-    build: ./API
-    container_name: api-app
-    ports:
-      - "8080:8080"
-    depends_on:
-      - ia
-    restart: always
-
-  ia:
+  
+  ia: 
     build: ./IA
-    container_name: ia-app
+    container_name: ia
     ports:
       - "8000:8000"
     restart: always
+  
+  ia-train:
+    build: ./IA
+    container_name: ia-train
+    volumes:
+      - ./IA:/app
+      - ./IA/models:/app/models
+      - ./IA/.env:/app/.env
+    command: ["python", ".", "train"]
+    depends_on:
+      - ia
+    restart: "no"
+  
+  etl: 
+    build: ./Scripting
+    conatainer_name: etl
+    volumes: 
+      - ./Scripting:/app
+    restart: "no"
+
+volumes:
+  pgdata:
