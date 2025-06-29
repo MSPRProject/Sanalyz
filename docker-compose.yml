@@ -4,15 +4,29 @@ services:
     image: postgres:latest
     container_name: sanalyz-db
     environment:
-      - POSTGRES_USER=value
-      - POSTGRES_PASSWORD=value
-      - POSTGRES_DB=value
+      - POSTGRES_USER=sanalyz
+      - POSTGRES_PASSWORD=sanalyz
+      - POSTGRES_DB=sanalyz
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: always
-  
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+    restart: always
+
   api:
     build: ./API
     container_name: api-spring
@@ -29,15 +43,13 @@ services:
     container_name: sanalyz-front
     ports: 
       - "4200:4200"
-    depends_on:
-      - api
     restart: always
   
   ia: 
     build: ./IA
     container_name: ia
     ports:
-      - "8000:8000"
+      - "4200:4200"
     restart: always
   
   ia-train:
@@ -48,16 +60,17 @@ services:
       - ./IA/models:/app/models
       - ./IA/.env:/app/.env
     command: ["python", ".", "train"]
-    depends_on:
-      - ia
     restart: "no"
   
   etl: 
     build: ./Scripting
-    conatainer_name: etl
+    container_name: sanalyz-etl
     volumes: 
       - ./Scripting:/app
+      - ./datasets:/datasets
+    command: ["python", "etl", "/datasets", "http://api:8080"]
     restart: "no"
 
 volumes:
   pgdata:
+  pgadmin_data:
