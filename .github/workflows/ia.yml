@@ -3,12 +3,10 @@ name: Check IA & ETL
 on:
   push:
     paths:
-      - 'ia/**'
-      # - 'etl/**'
+      - 'IA/**'
   pull_request:
     paths:
-      - 'ia/**'
-      # - 'etl/**'
+      - 'IA/**'
 
 jobs:
   python-check:
@@ -33,13 +31,3 @@ jobs:
         run: |
           cd IA
           pytest
-
-      # - name: Install dependencies (ETL)
-      #   run: |
-      #     cd ../../etl
-      #     pip install -r requirements.txt
-
-      # - name: Test ETL
-      #   run: |
-      #     cd etl
-      #     pytest
