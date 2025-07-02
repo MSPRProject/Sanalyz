@@ -3,10 +3,10 @@ name: Build Frontend
 on:
   push:
     paths:
-      - 'front/**'
+      - 'Front/**'
   pull_request:
     paths:
-      - 'front/**'
+      - 'Front/**'
 
 jobs:
   build:
@@ -25,4 +25,5 @@ jobs:
       - name: Install & Build
         run: |
           cd Front
-          ng serve
+          npm install
+          npm run build
