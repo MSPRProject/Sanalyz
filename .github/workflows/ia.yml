@@ -1,0 +1,45 @@
+name: Check IA & ETL
+
+on:
+  push:
+    paths:
+      - 'ia/**'
+      # - 'etl/**'
+  pull_request:
+    paths:
+      - 'ia/**'
+      # - 'etl/**'
+
+jobs:
+  python-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies (IA)
+        run: |
+          cd IA
+          pip install -r requirements.txt
+
+      - name: Test IA
+        run: |
+          cd IA
+          pytest
+
+      # - name: Install dependencies (ETL)
+      #   run: |
+      #     cd ../../etl
+      #     pip install -r requirements.txt
+
+      # - name: Test ETL
+      #   run: |
+      #     cd etl
+      #     pytest
