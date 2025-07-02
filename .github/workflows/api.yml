@@ -26,4 +26,4 @@ jobs:
       - name: Build & Test
         run: |
           cd API
-          mvn clean verify
+          mvn clean verify -X
