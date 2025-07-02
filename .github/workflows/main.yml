@@ -6,12 +6,70 @@ on:
   workflow_dispatch:
 
 jobs:
-  full:
+  build-api:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-# en cours, chercher les builds/tests
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build & Test API
+        run: |
+          cd API
+          mvn clean verify
+
+  build-front:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install & Build Frontend
+        run: |
+          cd Front
+          npm install
+          npm run build
+
+  check-ia-etl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies IA
+        run: |
+          cd IA
+          pip install -r requirements.txt
+
+      - name: Test IA
+        run: |
+          cd IA
+          pytest
+
+      - name: Install dependencies ETL
+        run: |
+          cd etl
+          pip install -r requirements.txt
+
+      - name: Test ETL
+        run: |
+          cd etl
+          pytest
