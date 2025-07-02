@@ -1,4 +1,4 @@
-name: Check IA & ETL
+name: Check IA
 
 on:
   push:
@@ -26,6 +26,7 @@ jobs:
         run: |
           cd IA
           pip install -r requirements.txt
+          pip install pytest
 
       - name: Test IA
         run: |
