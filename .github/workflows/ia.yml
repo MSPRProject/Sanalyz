@@ -27,8 +27,4 @@ jobs:
           cd IA
           pip install -r requirements.txt
           pip install pytest
-
-      - name: Test IA
-        run: |
-          cd IA
           pytest
