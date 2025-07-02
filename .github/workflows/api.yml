@@ -32,6 +32,16 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -p 5432; do
+            echo "Waiting for PostgreSQL..."
+            sleep 5
+          done
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -39,12 +49,11 @@ jobs:
           java-version: '21'
 
       - name: Build & Test
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
-          SPRING_DATASOURCE_USERNAME: test
-          SPRING_DATASOURCE_PASSWORD: test
-          SPRING_JPA_HIBERNATE_DDL_AUTO: update
-          SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
         run: |
           cd API
-          mvn clean verify -X
+          mvn clean verify \
+            -Dspring.datasource.url=jdbc:postgresql://localhost:5432/mspr_api \
+            -Dspring.datasource.username=postgres \
+            -Dspring.datasource.password=mspr_password \
+            -Dspring.jpa.hibernate.ddl-auto=update \
+            -Dspring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
