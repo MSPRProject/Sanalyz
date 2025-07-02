@@ -3,10 +3,10 @@ name: Build & Test API
 on:
   push:
     paths:
-      - 'api/**'
+      - 'API/**'
   pull_request:
     paths:
-      - 'api/**'
+      - 'API/**'
 
 jobs:
   build:
