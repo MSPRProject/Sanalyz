@@ -1,5 +1,4 @@
 services:
-
   db:
     image: postgres:latest
     container_name: sanalyz-db
@@ -12,10 +11,12 @@ services:
     ports:
       - "5432:5432"
     restart: always
-    
+    networks:
+      - sanalyz-net
+
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin
+    container_name: sanalyz-pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -26,6 +27,8 @@ services:
     depends_on:
       - db
     restart: always
+    networks:
+      - sanalyz-net
 
   api:
     build: ./API
@@ -33,10 +36,12 @@ services:
     ports: 
       - "8080:8080"
     volumes:
-    - ./API:/app
+      - ./API:/app
     depends_on:
       - db
     restart: always
+    networks:
+      - sanalyz-net
 
   front: 
     build: ./Front
@@ -44,13 +49,15 @@ services:
     ports: 
       - "4200:4200"
     restart: always
+    networks:
+      - sanalyz-net
   
   ia: 
     build: ./IA
     container_name: ia
-    ports:
-      - "4200:4200"
     restart: always
+    networks:
+      - sanalyz-net
   
   ia-train:
     build: ./IA
@@ -61,16 +68,13 @@ services:
       - ./IA/.env:/app/.env
     command: ["python", ".", "train"]
     restart: "no"
-  
-  etl: 
-    build: ./Scripting
-    container_name: sanalyz-etl
-    volumes: 
-      - ./Scripting:/app
-      - ./datasets:/datasets
-    command: ["python", "etl", "/datasets", "http://api:8080"]
-    restart: "no"
+    networks:
+      - sanalyz-net
 
 volumes:
   pgdata:
   pgadmin_data:
+
+networks:
+  sanalyz-net:
+    driver: bridge
